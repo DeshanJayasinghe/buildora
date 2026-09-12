@@ -1,0 +1,791 @@
+# ============================================================
+# BUILDORA AI - ROOT .gitignore
+# ============================================================
+#
+# Monorepo:
+# - Next.js / React / TypeScript
+# - NestJS
+# - pnpm / Turborepo
+# - Python / FastAPI / AI workers
+# - Rust / WASM
+# - Docker
+# - Temporal
+# - Playwright
+# - Terraform / OpenTofu
+#
+# IMPORTANT:
+# Keep these committed:
+# - pnpm-lock.yaml
+# - uv.lock
+# - Cargo.lock
+# - .terraform.lock.hcl
+# - .env.example
+# ============================================================
+
+
+# ============================================================
+# 1. ENVIRONMENT VARIABLES / SECRETS
+# ============================================================
+
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+*.env
+*.env.local
+
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Local secrets
+*.secret
+*.secrets
+secrets/
+.secrets/
+
+# Certificates / private keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# Allow explicitly committed public certificates if required later
+# !certificates/public/*.crt
+
+
+# ============================================================
+# 2. NODE.JS / PNPM
+# ============================================================
+
+node_modules/
+**/node_modules/
+
+.pnpm-store/
+**/.pnpm-store/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+.npm/
+.yarn/cache/
+.yarn/unplugged/
+
+# Package-manager temporary files
+*.tgz
+
+
+# ============================================================
+# 3. TURBOREPO
+# ============================================================
+
+.turbo/
+**/.turbo/
+
+.turbo-cache/
+**/.turbo-cache/
+
+
+# ============================================================
+# 4. NEXT.JS
+# ============================================================
+
+.next/
+**/.next/
+
+out/
+**/out/
+
+.vercel/
+**/.vercel/
+
+.next-cache/
+
+
+# ============================================================
+# 5. TYPESCRIPT / JAVASCRIPT BUILD OUTPUT
+# ============================================================
+
+dist/
+**/dist/
+
+build/
+**/build/
+
+lib/
+**/lib/
+
+.tmp/
+**/.tmp/
+
+temp/
+**/temp/
+
+.cache/
+**/.cache/
+
+*.tsbuildinfo
+
+
+# ============================================================
+# 6. TEST COVERAGE
+# ============================================================
+
+coverage/
+**/coverage/
+
+.nyc_output/
+**/.nyc_output/
+
+*.lcov
+
+junit.xml
+test-results.xml
+
+
+# ============================================================
+# 7. PLAYWRIGHT
+# ============================================================
+
+playwright-report/
+**/playwright-report/
+
+test-results/
+**/test-results/
+
+blob-report/
+**/blob-report/
+
+playwright/.cache/
+**/playwright/.cache/
+
+playwright/.auth/
+**/playwright/.auth/
+
+# Playwright generated screenshots/videos/traces
+*.webm
+*.trace.zip
+
+
+# ============================================================
+# 8. CYPRESS - IF ADDED LATER
+# ============================================================
+
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+
+
+# ============================================================
+# 9. PYTHON
+# ============================================================
+
+__pycache__/
+**/__pycache__/
+
+*.py[cod]
+*$py.class
+
+*.so
+
+# Virtual environments
+.venv/
+**/.venv/
+
+venv/
+**/venv/
+
+env/
+**/env/
+
+ENV/
+**/ENV/
+
+# Python package output
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+
+*.egg-info/
+**/*.egg-info/
+
+.installed.cfg
+*.egg
+MANIFEST
+
+
+# ============================================================
+# 10. PYTHON TEST / TYPE / LINT CACHE
+# ============================================================
+
+.pytest_cache/
+**/.pytest_cache/
+
+.mypy_cache/
+**/.mypy_cache/
+
+.ruff_cache/
+**/.ruff_cache/
+
+.pyright/
+**/.pyright/
+
+.hypothesis/
+**/.hypothesis/
+
+.tox/
+**/.tox/
+
+.nox/
+**/.nox/
+
+.coverage
+.coverage.*
+htmlcov/
+
+pytestdebug.log
+
+
+# ============================================================
+# 11. JUPYTER
+# ============================================================
+
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+
+# ============================================================
+# 12. PYTHON AI / ML MODELS & LARGE GENERATED FILES
+# ============================================================
+
+# Downloaded / generated model files should live in object storage
+# or be downloaded during setup, not committed to Git.
+
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+*.onnx
+*.engine
+*.tflite
+
+*.h5
+*.hdf5
+
+*.joblib
+*.pickle
+*.pkl
+
+# Common model folders
+models/
+**/models/
+
+weights/
+**/weights/
+
+checkpoints/
+**/checkpoints/
+
+artifacts/
+**/artifacts/
+
+# Allow documentation/example placeholder files
+!**/models/.gitkeep
+!**/weights/.gitkeep
+!**/checkpoints/.gitkeep
+!**/artifacts/.gitkeep
+
+
+# ============================================================
+# 13. RUST / CARGO / WASM
+# ============================================================
+
+target/
+**/target/
+
+# wasm-pack generated output
+pkg/
+**/pkg/
+
+.wasm-pack/
+**/.wasm-pack/
+
+# Rust backup files
+**/*.rs.bk
+
+# Do NOT ignore Cargo.lock.
+# Buildora AI is an application monorepo and should commit it.
+
+
+# ============================================================
+# 14. TEMPORAL
+# ============================================================
+
+.temporal/
+**/.temporal/
+
+temporal-data/
+**/temporal-data/
+
+
+# ============================================================
+# 15. DOCKER / LOCAL CONTAINER DATA
+# ============================================================
+
+docker-data/
+**/docker-data/
+
+docker-volumes/
+**/docker-volumes/
+
+volumes/
+**/volumes/
+
+postgres-data/
+**/postgres-data/
+
+redis-data/
+**/redis-data/
+
+minio-data/
+**/minio-data/
+
+
+# ============================================================
+# 16. LOCAL DEVELOPMENT DATA
+# ============================================================
+
+.local/
+**/.local/
+
+.local-data/
+**/.local-data/
+
+dev-data/
+**/dev-data/
+
+tmp/
+**/tmp/
+
+
+# ============================================================
+# 17. DATABASE FILES
+# ============================================================
+
+*.sqlite
+*.sqlite3
+*.db
+
+*.db-shm
+*.db-wal
+
+# Database dumps
+*.sql
+*.dump
+*.backup
+
+# Allow intentional database seed/migration SQL if needed
+!**/migrations/*.sql
+!**/seeds/*.sql
+
+
+# ============================================================
+# 18. TERRAFORM / OPENTOFU
+# ============================================================
+
+.terraform/
+**/.terraform/
+
+*.tfstate
+*.tfstate.*
+
+crash.log
+crash.*.log
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+.terraformrc
+terraform.rc
+
+# Terraform plans may contain sensitive values
+*.tfplan
+*.plan
+
+# OpenTofu
+.tofu/
+**/.tofu/
+
+# IMPORTANT:
+# Do NOT ignore .terraform.lock.hcl
+
+
+# ============================================================
+# 19. AWS / CLOUD LOCAL FILES
+# ============================================================
+
+.aws-sam/
+**/.aws-sam/
+
+.serverless/
+**/.serverless/
+
+cdk.out/
+**/cdk.out/
+
+
+# ============================================================
+# 20. CLOUDFLARE / WRANGLER
+# ============================================================
+
+.wrangler/
+**/.wrangler/
+
+.dev.vars
+.dev.vars.*
+
+
+# ============================================================
+# 21. LOG FILES
+# ============================================================
+
+logs/
+**/logs/
+
+*.log
+*.log.*
+
+debug.log
+
+*.pid
+*.pid.lock
+
+
+# ============================================================
+# 22. ERROR / CRASH DUMPS
+# ============================================================
+
+*.stackdump
+core
+core.*
+
+*.dmp
+
+
+# ============================================================
+# 23. MACOS
+# ============================================================
+
+.DS_Store
+**/.DS_Store
+
+.AppleDouble
+.LSOverride
+
+Icon?
+
+._*
+
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+.com.apple.timemachine.donotpresent
+
+
+# ============================================================
+# 24. WINDOWS
+# ============================================================
+
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+Desktop.ini
+
+$RECYCLE.BIN/
+
+*.lnk
+
+
+# ============================================================
+# 25. LINUX
+# ============================================================
+
+*~
+
+.directory
+
+.Trash-*
+
+
+# ============================================================
+# 26. VS CODE
+# ============================================================
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+.history/
+
+
+# ============================================================
+# 27. JETBRAINS IDEs
+# ============================================================
+
+.idea/
+**/.idea/
+
+*.iml
+*.iws
+*.ipr
+
+
+# ============================================================
+# 28. OTHER EDITORS
+# ============================================================
+
+*.swp
+*.swo
+*.swx
+
+*~
+.project
+.classpath
+.settings/
+
+
+# ============================================================
+# 29. AI CODING TOOL LOCAL STATE
+# ============================================================
+
+# Keep AGENTS.md and CLAUDE.md committed.
+# Ignore only machine/user-specific state.
+
+.claude/settings.local.json
+
+.codex/
+**/.codex/
+
+.cursor/
+**/.cursor/
+
+.windsurf/
+**/.windsurf/
+
+.aider*
+.aider.chat.history.md
+.aider.input.history
+
+
+# ============================================================
+# 30. STORYBOOK
+# ============================================================
+
+storybook-static/
+**/storybook-static/
+
+.storybook-cache/
+**/.storybook-cache/
+
+
+# ============================================================
+# 31. ESLINT / PRETTIER / TOOL CACHE
+# ============================================================
+
+.eslintcache
+.stylelintcache
+
+.prettier-cache
+
+
+# ============================================================
+# 32. SWC / BABEL
+# ============================================================
+
+.swc/
+**/.swc/
+
+.babel-cache/
+**/.babel-cache/
+
+
+# ============================================================
+# 33. NX - IF EVER INTRODUCED
+# ============================================================
+
+.nx/
+**/.nx/
+
+
+# ============================================================
+# 34. GENERATED DOCUMENTATION
+# ============================================================
+
+docs/generated/
+**/docs/generated/
+
+typedoc/
+**/typedoc/
+
+
+# ============================================================
+# 35. REPORTS
+# ============================================================
+
+reports/generated/
+**/reports/generated/
+
+test-reports/
+**/test-reports/
+
+
+# ============================================================
+# 36. LARGE CAD / BIM / PROJECT FILES
+# ============================================================
+
+# Do not commit real customer/project data.
+
+*.dwg
+*.dgn
+
+*.ifc
+*.ifczip
+*.ifcxml
+
+*.rvt
+*.rfa
+
+*.nwd
+*.nwc
+
+*.skp
+
+# Large model/scene exports
+*.glb
+*.gltf
+
+# Allow intentionally committed tiny test fixtures
+!**/fixtures/**/*.ifc
+!**/fixtures/**/*.gltf
+!**/fixtures/**/*.glb
+
+
+# ============================================================
+# 37. USER UPLOADS
+# ============================================================
+
+uploads/
+**/uploads/
+
+uploaded-files/
+**/uploaded-files/
+
+storage/local/
+**/storage/local/
+
+
+# ============================================================
+# 38. GENERATED RENDERS
+# ============================================================
+
+renders/
+**/renders/
+
+render-output/
+**/render-output/
+
+
+# ============================================================
+# 39. TEMP EXPORTS
+# ============================================================
+
+exports/
+**/exports/
+
+generated/
+**/generated/
+
+
+# ============================================================
+# 40. BACKUPS
+# ============================================================
+
+backup/
+backups/
+
+*.bak
+*.backup
+*.old
+*.orig
+
+
+# ============================================================
+# 41. LOCAL OVERRIDES
+# ============================================================
+
+*.local.json
+*.local.yaml
+*.local.yml
+
+config.local.*
+settings.local.*
+
+
+# ============================================================
+# 42. MISCELLANEOUS
+# ============================================================
+
+*.tmp
+*.temp
+
+.cache-loader/
+
+.DS_Store?
+
+
+# ============================================================
+# 43. FILES THAT MUST REMAIN COMMITTED
+# ============================================================
+
+!.env.example
+!.env.*.example
+
+!pnpm-lock.yaml
+!**/pnpm-lock.yaml
+
+!uv.lock
+!**/uv.lock
+
+!Cargo.lock
+!**/Cargo.lock
+
+!.terraform.lock.hcl
+!**/.terraform.lock.hcl
+
+!AGENTS.md
+!CLAUDE.md
