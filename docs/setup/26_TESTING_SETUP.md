@@ -1,6 +1,6 @@
 # Testing Setup
 
-BuildWise requires stronger testing than a normal dashboard because geometry and QS errors can cascade into costs.
+Buildora AI requires stronger testing than a normal dashboard because geometry and QS errors can cascade into costs.
 
 ## 1. TypeScript unit tests
 

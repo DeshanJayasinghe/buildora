@@ -91,7 +91,7 @@ wasm-pack --version
 Start dev server with a DB filename:
 
 ```bash
-temporal server start-dev --db-filename .temporal/buildwise.db
+temporal server start-dev --db-filename .temporal/buildora.db
 ```
 
 ## Auth works in web but API rejects

@@ -1,13 +1,13 @@
-# BuildWise Project Setup Pack
+# Buildora AI Project Setup Pack
 
-This pack is the step-by-step environment and repository setup companion to the BuildWise Architecture Pack.
+This pack is the step-by-step environment and repository setup companion to the Buildora AI Architecture Pack.
 
 ## Goal
 
-Start with a clean development machine and reach a verified BuildWise workspace containing:
+Start with a clean development machine and reach a verified Buildora AI workspace containing:
 
 ```text
-buildwise/
+buildora/
 ├── apps/
 │   ├── web/
 │   ├── api/
@@ -16,7 +16,7 @@ buildwise/
 │   └── render-worker/       # later
 ├── packages/
 │   ├── design-system/
-│   ├── domain/
+│   ├── model-session/
 │   ├── building-model/
 │   ├── cad-2d/
 │   ├── engine-3d/
@@ -60,7 +60,7 @@ These are pragmatic defaults for a one-person SaaS implementation.
 | BIM web | That Open + Fragments/web-ifc |
 | BIM server | IfcOpenShell |
 | Durable workflows | Temporal |
-| Production AI | BuildWise AI Gateway using provider APIs |
+| Production AI | Buildora AI Gateway using provider APIs |
 | File storage | Cloudflare R2 or S3 |
 | Billing | Stripe |
 | Unit tests | Vitest / pytest / cargo test |
@@ -91,7 +91,7 @@ Python, Rust/WASM, BIM, Temporal, AI, rendering, PostGIS, and pgvector can be en
 
 ## Relationship with architecture documents
 
-If this setup pack conflicts with the BuildWise Architecture Pack:
+If this setup pack conflicts with the Buildora AI Architecture Pack:
 
 1. a newer explicit ADR wins,
 2. otherwise the Architecture Pack wins,

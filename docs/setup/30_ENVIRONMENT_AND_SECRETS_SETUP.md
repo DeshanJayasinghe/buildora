@@ -26,7 +26,7 @@ Examples:
 WEB_URL=http://localhost:3000
 API_URL=http://localhost:4000
 
-DATABASE_URL=postgresql://buildwise:local-development-only@localhost:5432/buildwise
+DATABASE_URL=postgresql://buildora:local-development-only@localhost:5432/buildora
 REDIS_URL=redis://localhost:6379
 
 CLERK_SECRET_KEY=

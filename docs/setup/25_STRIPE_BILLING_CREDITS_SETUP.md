@@ -54,7 +54,7 @@ Events should update internal subscription state idempotently.
 
 ## 6. Usage ledger
 
-BuildWise needs its own usage accounting for:
+Buildora AI needs its own usage accounting for:
 
 - AI design credits
 - render credits

@@ -78,7 +78,7 @@ apps/ai-worker/
 ├── pyproject.toml
 ├── uv.lock
 └── src/
-    └── buildwise_ai/
+    └── buildora_ai/
         ├── __init__.py
         └── main.py
 ```
@@ -88,7 +88,7 @@ apps/ai-worker/
 ```python
 from fastapi import FastAPI
 
-app = FastAPI(title="BuildWise AI Worker")
+app = FastAPI(title="Buildora AI Worker")
 
 @app.get("/health")
 def health():
@@ -100,7 +100,7 @@ def health():
 Depending on module path:
 
 ```bash
-uv run fastapi dev src/buildwise_ai/main.py
+uv run fastapi dev src/buildora_ai/main.py
 ```
 
 ## 7. Quality

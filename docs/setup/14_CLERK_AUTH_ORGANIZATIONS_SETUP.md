@@ -4,7 +4,7 @@ For the MVP, Clerk is recommended to reduce solo-development auth workload.
 
 Important architectural rule:
 
-> Clerk proves identity; BuildWise still owns application authorization and project-domain permissions.
+> Clerk proves identity; Buildora AI still owns application authorization and project-domain permissions.
 
 Keep Clerk behind an auth adapter.
 
@@ -48,7 +48,7 @@ Never expose `CLERK_SECRET_KEY` to browser code.
 
 ## 4. Organizations
 
-BuildWise has company/team workspaces.
+Buildora AI has company/team workspaces.
 
 Clerk Organizations can simplify:
 
@@ -56,7 +56,7 @@ Clerk Organizations can simplify:
 - invitations
 - org switching
 
-However BuildWise should keep a local organization mirror:
+However Buildora AI should keep a local organization mirror:
 
 ```text
 organizations
@@ -94,7 +94,7 @@ Can you edit Project X?
 
 These are different.
 
-Implement API guards/policies using BuildWise database relationships.
+Implement API guards/policies using Buildora AI database relationships.
 
 ## 7. Initial roles
 

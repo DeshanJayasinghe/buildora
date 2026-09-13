@@ -19,7 +19,7 @@ Do not add it while basic wall/room/slab geometry can be reliably handled by Typ
 Preferred:
 
 ```text
-BuildWise geometry service interface
+Buildora AI geometry service interface
         ↓
 OpenCascade adapter/service
 ```

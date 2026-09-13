@@ -11,15 +11,15 @@ services:
   postgres:
     image: postgres:17
     environment:
-      POSTGRES_DB: buildwise
-      POSTGRES_USER: buildwise
+      POSTGRES_DB: buildora
+      POSTGRES_USER: buildora
       POSTGRES_PASSWORD: local-development-only
     ports:
       - "5432:5432"
     volumes:
-      - buildwise_postgres:/var/lib/postgresql/data
+      - buildora_postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U buildwise -d buildwise"]
+      test: ["CMD-SHELL", "pg_isready -U buildora -d buildora"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -29,7 +29,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - buildwise_redis:/data
+      - buildora_redis:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -37,8 +37,8 @@ services:
       retries: 10
 
 volumes:
-  buildwise_postgres:
-  buildwise_redis:
+  buildora_postgres:
+  buildora_redis:
 ```
 
 Pin exact image versions later in release-oriented infrastructure.
@@ -60,7 +60,7 @@ docker compose logs redis
 ## 4. Test DB
 
 ```bash
-docker compose exec postgres psql -U buildwise -d buildwise -c "SELECT NOW();"
+docker compose exec postgres psql -U buildora -d buildora -c "SELECT NOW();"
 ```
 
 ## 5. Test Redis

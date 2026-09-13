@@ -18,7 +18,7 @@ Set name:
 
 ```json
 {
-  "name": "@buildwise/engine-3d",
+  "name": "@buildora/engine-3d",
   "private": true,
   "version": "0.0.0"
 }

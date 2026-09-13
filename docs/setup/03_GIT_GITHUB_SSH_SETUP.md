@@ -60,16 +60,16 @@ ssh -T git@github.com
 Recommended:
 
 - Private
-- Name: `buildwise`
+- Name: `buildora`
 - Do not generate unrelated starter code if creating locally first.
 
 Using GitHub CLI:
 
 ```bash
-mkdir buildwise
-cd buildwise
+mkdir buildora
+cd buildora
 git init
-gh repo create buildwise --private --source=. --remote=origin
+gh repo create buildora --private --source=. --remote=origin
 ```
 
 ## 6. Branch model
@@ -98,10 +98,10 @@ fix/wall-undo
 Example:
 
 ```bash
-mkdir -p ../buildwise-worktrees
+mkdir -p ../buildora-worktrees
 
-git worktree add ../buildwise-worktrees/wall feature/building-model-wall
-git worktree add ../buildwise-worktrees/ui feature/dashboard-ui
+git worktree add ../buildora-worktrees/wall feature/building-model-wall
+git worktree add ../buildora-worktrees/ui feature/dashboard-ui
 ```
 
 List:
@@ -113,7 +113,7 @@ git worktree list
 Remove completed worktree:
 
 ```bash
-git worktree remove ../buildwise-worktrees/wall
+git worktree remove ../buildora-worktrees/wall
 ```
 
 ## 8. Commit convention

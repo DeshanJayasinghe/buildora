@@ -20,7 +20,7 @@ Set:
 
 ```json
 {
-  "name": "@buildwise/cad-2d",
+  "name": "@buildora/cad-2d",
   "private": true,
   "version": "0.0.0"
 }
@@ -37,8 +37,8 @@ pnpm add pixi.js
 The package may depend on:
 
 ```text
-@buildwise/building-model
-@buildwise/units
+@buildora/building-model
+@buildora/units
 ```
 
 It must not become the owner of persistent Building Model state.

@@ -22,7 +22,7 @@ Suggested package:
 packages/bim-web/
 ```
 
-Do not mix That Open-specific classes into the BuildWise domain model.
+Do not mix That Open-specific classes into the Buildora AI domain model.
 
 ## 3. First capability
 
@@ -42,7 +42,7 @@ Do not start with editable IFC authoring.
 
 ## 4. Second capability
 
-Map a small supported IFC subset into BuildWise:
+Map a small supported IFC subset into Buildora AI:
 
 - IfcBuildingStorey → Level
 - IfcWall / IfcWallStandardCase → Wall
@@ -55,7 +55,7 @@ Map a small supported IFC subset into BuildWise:
 
 Use Fragments as an optimized browser BIM representation where it provides measurable value.
 
-Fragments are not the authoritative BuildWise project database.
+Fragments are not the authoritative Buildora AI project database.
 
 ## 6. Version compatibility
 

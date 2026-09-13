@@ -53,16 +53,16 @@ pnpm add -Dw turbo
 Use internal names such as:
 
 ```text
-@buildwise/domain
-@buildwise/building-model
-@buildwise/units
-@buildwise/api-contracts
-@buildwise/design-system
-@buildwise/cad-2d
-@buildwise/engine-3d
-@buildwise/qs-engine
-@buildwise/cost-engine
-@buildwise/ai-tools
+@buildora/domain
+@buildora/building-model
+@buildora/units
+@buildora/api-contracts
+@buildora/design-system
+@buildora/cad-2d
+@buildora/engine-3d
+@buildora/qs-engine
+@buildora/cost-engine
+@buildora/ai-tools
 ```
 
 ## 5. Internal package versioning
@@ -71,7 +71,7 @@ For private workspace packages:
 
 ```json
 {
-  "name": "@buildwise/domain",
+  "name": "@buildora/domain",
   "private": true,
   "version": "0.0.0"
 }
@@ -80,7 +80,7 @@ For private workspace packages:
 Consumers can use:
 
 ```json
-"@buildwise/domain": "workspace:*"
+"@buildora/domain": "workspace:*"
 ```
 
 ## 6. Verify workspace

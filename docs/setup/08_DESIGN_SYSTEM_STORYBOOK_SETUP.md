@@ -22,7 +22,7 @@ Set package name:
 
 ```json
 {
-  "name": "@buildwise/design-system",
+  "name": "@buildora/design-system",
   "private": true,
   "version": "0.0.0"
 }

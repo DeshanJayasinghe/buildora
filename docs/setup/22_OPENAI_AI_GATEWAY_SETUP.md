@@ -1,6 +1,6 @@
-# OpenAI / BuildWise AI Gateway Setup
+# OpenAI / Buildora AI Gateway Setup
 
-Production AI should be accessed through the BuildWise AI Gateway, never directly from random UI modules.
+Production AI should be accessed through the Buildora AI Gateway, never directly from random UI modules.
 
 ## 1. API key
 

@@ -1,6 +1,6 @@
 # PostgreSQL + Drizzle Setup
 
-BuildWise uses PostgreSQL as the main transactional database.
+Buildora AI uses PostgreSQL as the main transactional database.
 
 For the TypeScript data layer, this setup pack recommends **Drizzle ORM + node-postgres** because it remains close to SQL and has useful PostgreSQL extension support.
 
@@ -13,8 +13,8 @@ Initial database:
 ```text
 host: localhost
 port: 5432
-database: buildwise
-user: buildwise
+database: buildora
+user: buildora
 password: local-development-only
 ```
 
@@ -114,7 +114,7 @@ Use PostgreSQL `numeric` for money/rates where exact decimal semantics matter.
 From container:
 
 ```bash
-docker compose exec postgres psql -U buildwise -d buildwise -c "SELECT 1;"
+docker compose exec postgres psql -U buildora -d buildora -c "SELECT 1;"
 ```
 
 Then run a simple API integration test that queries the DB.

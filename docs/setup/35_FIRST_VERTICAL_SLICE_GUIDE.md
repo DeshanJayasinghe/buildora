@@ -1,4 +1,4 @@
-# First BuildWise Vertical Slice
+# First Buildora AI Vertical Slice
 
 This should be the first meaningful product milestone.
 

@@ -6,7 +6,7 @@ Target:
 apps/api
 ```
 
-BuildWise uses NestJS as the main API/application backend.
+Buildora AI uses NestJS as the main API/application backend.
 
 ## 1. Scaffold with the CLI
 
@@ -126,9 +126,9 @@ BillingModule
 Core deterministic logic belongs in packages such as:
 
 ```text
-@buildwise/building-model
-@buildwise/qs-engine
-@buildwise/cost-engine
+@buildora/building-model
+@buildora/qs-engine
+@buildora/cost-engine
 ```
 
 ## 8. Verify

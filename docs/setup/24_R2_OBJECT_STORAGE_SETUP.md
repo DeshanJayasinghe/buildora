@@ -27,9 +27,9 @@ R2ObjectStorage
 Create separate buckets or logical prefixes for environments:
 
 ```text
-buildwise-dev
-buildwise-staging
-buildwise-production
+buildora-dev
+buildora-staging
+buildora-production
 ```
 
 Do not mix production files with development.

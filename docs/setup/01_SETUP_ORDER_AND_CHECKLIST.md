@@ -70,7 +70,7 @@ Node should be a supported 24.x LTS release.
 ## Stage F — Domain engine foundation
 
 - [ ] `packages/units`
-- [ ] `packages/domain`
+- [ ] `packages/model-session`
 - [ ] `packages/building-model`
 - [ ] command model
 - [ ] model version

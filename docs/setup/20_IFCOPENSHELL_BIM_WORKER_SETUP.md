@@ -39,11 +39,11 @@ Do not force source compilation unless needed.
 - extract properties
 - validate import
 - produce mapping payloads
-- export supported BuildWise elements to IFC later
+- export supported Buildora AI elements to IFC later
 
 ## 5. API boundary
 
-Return BuildWise-neutral DTOs.
+Return Buildora AI-neutral DTOs.
 
 Bad:
 
@@ -77,4 +77,4 @@ Test:
 
 ## 7. Do not make IFC the source of truth
 
-Once imported, authoritative supported elements live in the BuildWise model.
+Once imported, authoritative supported elements live in the Buildora AI model.

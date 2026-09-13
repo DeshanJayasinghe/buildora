@@ -1,6 +1,6 @@
-# BuildWise Agent Instructions
+# Buildora AI Agent Instructions
 
-BuildWise architecture is documented under:
+Buildora AI architecture is documented under:
 
 ```text
 docs/architecture/
@@ -8,7 +8,7 @@ docs/architecture/
 
 Before implementing any feature:
 
-1. Read `docs/architecture/00_README.md`.
+1. Read `docs/README.md`.
 2. Read the master product reference.
 3. Read the architecture guide for the module being changed.
 4. Read applicable ADRs.
@@ -16,7 +16,7 @@ Before implementing any feature:
 
 Critical rules:
 
-- The BuildWise Building Model is the source of truth.
+- The Buildora AI Building Model is the source of truth.
 - Never duplicate authoritative 2D / 3D / BIM / QS / BOQ / cost state.
 - 2D and 3D are adapters/views over the Building Model.
 - IFC is interoperability, not the live domain database.

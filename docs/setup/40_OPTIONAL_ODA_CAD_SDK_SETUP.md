@@ -6,7 +6,7 @@ This requires licensing review.
 
 ## Do not install for MVP unless required
 
-Initial BuildWise import can begin with:
+Initial Buildora AI import can begin with:
 
 - PDF
 - images
@@ -39,7 +39,7 @@ OdaCadImportProvider
 
 ## Output
 
-ODA/importer should return BuildWise-neutral intermediate geometry/metadata.
+ODA/importer should return Buildora AI-neutral intermediate geometry/metadata.
 
 It must not become the domain model.
 

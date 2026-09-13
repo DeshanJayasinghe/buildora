@@ -1,10 +1,10 @@
 # Codex, Claude and Antigravity Setup
 
-BuildWise uses AI coding tools as separate engineering roles.
+Buildora AI uses AI coding tools as separate engineering roles.
 
 ## 1. Canonical architecture folder
 
-Before substantial coding, place the BuildWise architecture pack at:
+Before substantial coding, place the Buildora AI architecture pack at:
 
 ```text
 docs/architecture/
@@ -49,7 +49,7 @@ Claude should default to planning/review rather than silently redesigning the re
 Create a saved workspace instruction that says:
 
 ```text
-BuildWise architecture is canonical under docs/architecture.
+Buildora AI architecture is canonical under docs/architecture.
 Do not redesign domain boundaries while performing browser/UI verification.
 For UI changes, report failures first. Make code changes only when specifically assigned.
 ```
@@ -86,11 +86,11 @@ Use:
 ```text
 Before changing code:
 1. Read AGENTS.md.
-2. Read docs/architecture/00_README.md.
+2. Read docs/README.md.
 3. Read docs relevant to this feature.
 4. Read applicable ADRs.
 5. Inspect current code before proposing new packages.
-6. Preserve the BuildWise Building Model as the source of truth.
+6. Preserve the Buildora AI Building Model as the source of truth.
 7. Do not introduce a new architectural dependency without explaining why.
 ```
 

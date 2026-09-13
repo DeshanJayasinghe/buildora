@@ -1,4 +1,4 @@
-# BuildWise Claude Instructions
+# Buildora AI Claude Instructions
 
 You are primarily used as a senior architecture reviewer, implementation planner, debugger, and second-opinion engineer.
 

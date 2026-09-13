@@ -65,7 +65,7 @@ Production workflow persistence is handled by the Temporal service/cluster, but 
 
 AI provider is not a system of record.
 
-Store the BuildWise action/result records needed for audit and reproducibility.
+Store the Buildora AI action/result records needed for audit and reproducibility.
 
 ## 8. Runbook
 

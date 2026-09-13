@@ -1,6 +1,6 @@
 # macOS Developer Machine Setup
 
-This is the primary workstation guide for BuildWise.
+This is the primary workstation guide for Buildora AI.
 
 ## 1. Check macOS and architecture
 
@@ -69,7 +69,7 @@ git --version
 
 ## 5. Install Node 24 LTS
 
-BuildWise pins Node 24 LTS for the initial development baseline.
+Buildora AI pins Node 24 LTS for the initial development baseline.
 
 You may use the official Node installer or a version manager.
 

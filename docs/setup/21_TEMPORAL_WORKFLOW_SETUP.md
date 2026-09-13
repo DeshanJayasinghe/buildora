@@ -1,6 +1,6 @@
 # Temporal Workflow Setup
 
-Temporal should be added when BuildWise starts long-running/multi-step operations such as plan recognition and BIM processing.
+Temporal should be added when Buildora AI starts long-running/multi-step operations such as plan recognition and BIM processing.
 
 ## 1. Install Temporal CLI on macOS
 
@@ -14,7 +14,7 @@ Use persistent local workflow history:
 
 ```bash
 mkdir -p .temporal
-temporal server start-dev --db-filename .temporal/buildwise.db
+temporal server start-dev --db-filename .temporal/buildora.db
 ```
 
 Default service:
@@ -66,7 +66,7 @@ Complete
 
 Verify it appears in the Temporal UI.
 
-## 6. First real BuildWise workflow
+## 6. First real Buildora AI workflow
 
 Later:
 

@@ -14,7 +14,7 @@ docker compose ps
 ### Terminal 2 — Temporal, only when needed
 
 ```bash
-temporal server start-dev --db-filename .temporal/buildwise.db
+temporal server start-dev --db-filename .temporal/buildora.db
 ```
 
 ### Terminal 3 — TypeScript apps
@@ -29,7 +29,7 @@ pnpm dev
 
 ```bash
 cd apps/ai-worker
-uv run fastapi dev src/buildwise_ai/main.py
+uv run fastapi dev src/buildora_ai/main.py
 ```
 
 ## Expected local URLs

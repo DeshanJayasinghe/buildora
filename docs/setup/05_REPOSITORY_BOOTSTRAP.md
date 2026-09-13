@@ -41,7 +41,7 @@ Recommended baseline:
 
 ```json
 {
-  "name": "buildwise",
+  "name": "buildora",
   "private": true,
   "version": "0.0.0",
   "engines": {
@@ -139,7 +139,7 @@ test-results/
 
 ```bash
 git add .
-git commit -m "chore(repo): bootstrap BuildWise repository"
+git commit -m "chore(repo): bootstrap Buildora AI repository"
 git push -u origin main
 ```
 

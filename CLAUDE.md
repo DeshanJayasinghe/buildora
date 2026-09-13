@@ -63,9 +63,15 @@ Do not respond to architectural questions from memory alone if the repository co
 
 # 3. Documentation Routing
 
-Use the documentation index first.
+**`docs/README.md` is the documentation router.** It lists only files that exist.
+Start there, then read the frozen baseline.
 
-Typical mapping:
+## Always, before architecture work
+
+```text
+docs/architecture/FINAL_SYSTEM_ARCHITECTURE.md      ← the frozen baseline
+docs/architecture/34_ADR_Index.md                   ← ADR-001 … ADR-022
+```
 
 ## Product / overall architecture
 
@@ -75,12 +81,18 @@ docs/architecture/03_System_Architecture.md
 docs/architecture/04_Monorepo_and_Module_Architecture.md
 ```
 
+## Building Model
+
+```text
+docs/architecture/05_Building_Model_Domain.md
+ADR-001 ADR-002 ADR-005 ADR-006 ADR-007
+```
+
 ## Backend
 
 ```text
 docs/standards/Buildora_AI_Backend_Engineering_Standards.md
-docs/architecture/16_API_and_Contracts.md
-docs/architecture/Buildora_AI_Database_Architecture.md
+docs/architecture/15_Database_and_Data_Architecture.md
 ```
 
 ## Frontend / editor
@@ -89,46 +101,35 @@ docs/architecture/Buildora_AI_Database_Architecture.md
 docs/standards/Buildora_AI_Frontend_Engineering_Standards.md
 docs/architecture/06_2D_CAD_Editor_Implementation.md
 docs/architecture/07_3D_Engine_Implementation.md
-```
-
-## Building Model
-
-```text
-docs/architecture/05_Building_Model_Domain.md
-docs/architecture/17_Command_Versioning_and_Undo_Redo.md
+ADR-008 (model-session)  ADR-017 (WebGL2)
 ```
 
 ## QS / BOQ / Cost
 
 ```text
-docs/architecture/12_QS_Engine.md
-docs/architecture/13_BOQ_and_Cost_Engine.md
-docs/architecture/14_Materials_Assemblies_and_Rates.md
+docs/architecture/15_Database_and_Data_Architecture.md §58–§72
+ADR-009 (measurement rulesets)  ADR-015 (reproducibility lineage)
 ```
 
 ## AI
 
 ```text
-docs/architecture/10_AI_Gateway_and_Model_Routing.md
-docs/architecture/11_AI_Copilot_Tool_Architecture.md
+ADR-010 (provider pricing as configuration)
+ADR-013 (ChangeSet safety)
 ```
 
 ## Billing
 
 ```text
-docs/architecture/Buildora_AI_Billing_Architecture.md
-```
-
-## Database
-
-```text
-docs/architecture/Buildora_AI_Database_Architecture.md
+docs/architecture/24_Billing_AI_Credits_and_Usage.md
+ADR-014
 ```
 
 ## DevOps
 
 ```text
-docs/architecture/Buildora_AI_Deployment_Production_DevOps_Plan.md
+docs/architecture/27_DevOps_Environments_and_Deployment.md
+ADR-012 (provisioning gates)
 ```
 
 ## Planning
@@ -145,7 +146,40 @@ docs/finance/Buildora_AI_Development_Production_Costing_Plan.md
 docs/finance/Buildora_AI_Return_On_Investment_Plan.md
 ```
 
-If exact filenames differ, follow `docs/README.md`.
+**Documents not yet written** are listed in `docs/README.md` §3 with the nearest
+existing source. Never treat those paths as mandatory reads. **If a needed
+document is missing, say so and propose writing it — never invent the
+architecture silently.**
+
+---
+
+# 3.1 Architecture Freeze
+
+**The foundational architecture is FROZEN as of 2026-09-12** — baseline in
+`docs/architecture/FINAL_SYSTEM_ARCHITECTURE.md`, decisions in ADR-001 … ADR-022.
+
+Claude's most valuable function now is **preventing drift from the freeze**.
+
+When reviewing or planning, check every proposal against the frozen set:
+
+```text
+canonical Building Model            persistence/versioning model
+coordinate/datum model              room/opening/type semantics
+editor-session ownership            renderer boundaries
+database authority                  tenant boundary
+deterministic QS/BOQ/cost rules     AI ChangeSet safety model
+billing ledger architecture         package dependency direction
+core technology stack
+```
+
+A locally elegant solution that violates one of these is **not acceptable**.
+
+If a frozen decision genuinely looks wrong: stop, state the problem precisely,
+and propose a superseding ADR. Do not accept code that quietly encodes a
+different decision — that is a BLOCKER.
+
+Deferred technologies do not become approved by appearing in a roadmap document.
+Performance technologies remain evidence-driven.
 
 ---
 
@@ -193,6 +227,13 @@ No duplicate authority.
 
 PixiJS and Three.js representations are derived.
 
+Both are fed by **`packages/model-session`** — a renderer-neutral, framework-free
+working copy holding `baseVersion`, optimistic commands and reconciliation
+(ADR-008). It is **not** a second authoritative database; PostgreSQL remains
+authoritative.
+
+`cad-2d` and `engine-3d` must never import each other.
+
 ## 5.3 IFC is interchange
 
 Not the internal editable domain model.
@@ -212,6 +253,28 @@ Cross-tenant access is a release-blocking defect.
 ## 5.7 PostgreSQL is authoritative
 
 Redis/cache/workflow/object storage serve distinct roles.
+
+## 5.8 Geometry and datum (ADR-005)
+
+Millimetres canonical. `Level.elevationMm` is the single authoritative vertical
+fact. Element z is level-relative. Floor-to-floor and absolute z are **derived,
+never stored**. Slab thickness belongs to the Slab and its assembly.
+
+## 5.9 Rooms and openings (ADR-006)
+
+Room boundaries derive from **interior wall faces**, not centrelines. Area is
+computed from the boundary, never entered. A door or window **is** its opening;
+QS uses one deduction abstraction.
+
+## 5.10 Identifiers (ADR-004)
+
+`uuid` primary keys; `public_id` for display only and never a foreign-key target.
+
+## 5.11 Package boundaries (ADR-011)
+
+Dependencies point downward only; domain packages import no framework; no cycles.
+`packages/domain` does not exist. `packages/core` does not exist and is not to be
+created speculatively.
 
 ---
 
@@ -494,6 +557,10 @@ For any model/domain change, Claude checks:
 
 - Stable ID?
 - Millimetre units?
+- Level-relative z; no stored absolute z or floor-to-floor?
+- Room boundary from interior faces; area computed not entered?
+- Single hosted representation for the opening?
+- Type identity kept separate from cost assembly?
 - Domain independent from UI/framework?
 - Command semantics?
 - Validation?
@@ -848,7 +915,8 @@ Reject casual use of mutable `latest` for production authority.
 
 # 33. Infrastructure Complexity Gate
 
-Claude should actively prevent premature:
+Provisioning gates are set by ADR-012. Claude should prevent any service being
+introduced before a real consumer exists, and should actively prevent premature:
 
 ```text
 Kubernetes
@@ -1303,7 +1371,8 @@ for repository/service/package naming where appropriate.
 
 Avoid introducing `BuildWise` into new implementation.
 
-Legacy docs may be renamed separately.
+**The rename is complete as of 2026-09-12.** No `BuildWise` reference remains
+anywhere in the repository. A reappearance is a regression, not legacy.
 
 ---
 

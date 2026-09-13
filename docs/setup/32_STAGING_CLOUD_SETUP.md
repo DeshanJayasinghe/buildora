@@ -27,9 +27,9 @@ Keep the application portable through Docker and environment configuration.
 Use explicit names:
 
 ```text
-buildwise-staging-db
-buildwise-staging-redis
-buildwise-staging-files
+buildora-staging-db
+buildora-staging-redis
+buildora-staging-files
 ```
 
 ## 2. Managed PostgreSQL

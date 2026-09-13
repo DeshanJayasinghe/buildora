@@ -62,7 +62,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 
 ## 4. Do not confuse spatial geometry
 
-The BuildWise Building Model's internal construction geometry is not the same as PostGIS site geography.
+The Buildora AI Building Model's internal construction geometry is not the same as PostGIS site geography.
 
 Use:
 

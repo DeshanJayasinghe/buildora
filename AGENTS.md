@@ -91,32 +91,87 @@ docs/
 └── operations/
 ```
 
-Important canonical references include, where present:
+**`docs/README.md` is the documentation router.** It lists only documents that
+actually exist. Start there.
+
+Canonical references — **all of these exist**:
 
 ```text
-docs/architecture/01_Master_Product_Reference.md
-docs/architecture/Buildora_AI_Database_Architecture.md
-docs/architecture/Buildora_AI_Billing_Architecture.md
-docs/architecture/Buildora_AI_Deployment_Production_DevOps_Plan.md
+ARCHITECTURE — frozen baseline and decisions
+docs/architecture/FINAL_SYSTEM_ARCHITECTURE.md      ← read first
+docs/architecture/34_ADR_Index.md
+docs/architecture/adr/                              ← ADR-001 … ADR-022
 
+ARCHITECTURE — canonical subjects
+docs/architecture/01_Master_Product_Reference.md
+docs/architecture/03_System_Architecture.md
+docs/architecture/04_Monorepo_and_Module_Architecture.md
+docs/architecture/05_Building_Model_Domain.md
+docs/architecture/06_2D_CAD_Editor_Implementation.md
+docs/architecture/07_3D_Engine_Implementation.md
+docs/architecture/15_Database_and_Data_Architecture.md
+docs/architecture/24_Billing_AI_Credits_and_Usage.md
+docs/architecture/27_DevOps_Environments_and_Deployment.md
+
+STANDARDS
 docs/standards/Buildora_AI_Backend_Engineering_Standards.md
 docs/standards/Buildora_AI_Frontend_Engineering_Standards.md
 docs/standards/Buildora_AI_Codex_Implementation_Reference.md
 docs/standards/Buildora_AI_Solo_Developer_AI_Assisted_Development_Guide.md
 
+PLANNING
 docs/planning/Buildora_AI_Phase_Wise_Development_Checklist.md
 docs/planning/Buildora_AI_Sprintwise_Project_Plan.md
 
+EXAMPLES
 docs/examples/Buildora_AI_Sample_Backend_CRUD.md
 docs/examples/Buildora_AI_Sample_Frontend_CRUD.md
 
+FINANCE
 docs/finance/Buildora_AI_Development_Production_Costing_Plan.md
 docs/finance/Buildora_AI_Return_On_Investment_Plan.md
+
+SETUP
+docs/setup/                                         ← 46-document setup pack
 ```
 
-If a filename differs slightly, use `docs/README.md` and the nearest canonical document.
+Several documents listed in older indexes are **not yet written**. They are
+recorded in `docs/README.md` §3 with the nearest existing source.
+**Never treat a path in that section as a mandatory read, and never invent
+architecture because a document is missing** — stop and report the gap.
 
-Do not create duplicate architecture documents merely because an existing file was not found immediately.
+Do not create duplicate architecture documents merely because an existing file
+was not found immediately.
+
+---
+
+# 3.1 Architecture Freeze — Read This Before Changing Anything
+
+**The foundational architecture is FROZEN as of 2026-09-12.**
+
+Baseline: `docs/architecture/FINAL_SYSTEM_ARCHITECTURE.md`
+Decisions: `docs/architecture/34_ADR_Index.md` (ADR-001 … ADR-022, all accepted)
+
+The following may **not** be changed by an implementation agent without a new,
+explicitly approved ADR that supersedes the applicable decision:
+
+```text
+canonical Building Model            persistence/versioning model
+coordinate/datum model              room/opening/type semantics
+editor-session ownership            renderer boundaries
+database authority                  tenant boundary
+deterministic QS/BOQ/cost rules     AI ChangeSet safety model
+billing ledger architecture         package dependency direction
+core technology stack
+```
+
+Implementation detail may evolve within these boundaries.
+
+**Do not relitigate a locked decision.** If you believe one is wrong, stop,
+state the problem, and propose an ADR. Do not encode a different decision in code.
+
+Performance technologies (Rust/WASM, workers, replicas) remain **evidence-driven**.
+Deferred technologies do **not** become approved by appearing in a roadmap document.
 
 ---
 
@@ -212,35 +267,57 @@ rather than silently implementing it.
 
 Buildora AI is a single monorepo.
 
-Expected high-level structure:
+Expected high-level structure (authoritative:
+`docs/architecture/04_Monorepo_and_Module_Architecture.md`, ADR-011, ADR-012):
 
 ```text
 apps/
-├── web/
-├── api/
-├── ai-worker/
-├── bim-worker/
-└── render-worker/
+├── web/                MVP
+├── api/                MVP
+├── ai-worker/          gated ~Sprint 31
+├── bim-worker/         gated ~Sprint 33
+(render-worker: NOT CREATED — post-MVP)
 
 packages/
-├── design-system/
-├── api-contracts/
-├── domain/
-├── building-model/
-├── cad-2d/
-├── engine-3d/
-├── qs-engine/
-├── cost-engine/
-├── ai-tools/
-└── units/
+├── design-system/      MVP
+├── api-contracts/      MVP
+├── units/              MVP
+├── building-model/     MVP
+├── model-session/      MVP — renderer-neutral working model (ADR-008)
+├── cad-2d/             MVP
+├── engine-3d/          MVP
+├── qs-engine/          MVP
+├── cost-engine/        MVP
+(ai-tools: NOT CREATED — gated ~Sprint 27)
 
 native/
-└── geometry-wasm/
+(geometry-wasm: NOT CREATED — profiling-gated)
 
 infrastructure/
 
 docs/
 ```
+
+**`packages/domain` does not exist and must not be created.** It was an undefined
+boundary and was deleted (ADR-011).
+
+**`packages/core` does not exist.** Do not create it. Keep concepts with their
+owning module. It may be introduced later only under the three conditions in
+`04_Monorepo_and_Module_Architecture.md` §5.1.
+
+**Do not create an app or package before a real consumer exists** (ADR-012).
+Placeholder directories may hold a README naming the gate, but no build or
+runtime configuration.
+
+## Dependency direction — to be enforced in CI (Sprint 01 acceptance criteria)
+
+```text
+units → building-model → model-session → { cad-2d, engine-3d }
+        building-model → qs-engine → cost-engine
+```
+
+Dependencies point **downward only**; no lateral edges; **no cycles**.
+`cad-2d` and `engine-3d` must never import each other.
 
 Do not split frontend, backend, AI, BIM, infrastructure, contracts, or documentation into separate Git repositories without an approved ADR.
 
@@ -420,6 +497,21 @@ millimetres
 
 unless an approved domain document explicitly states otherwise.
 
+## Datum (ADR-005 — locked)
+
+```text
+Project-local datum:  ground-floor finished floor level = 0 mm
+Level.elevationMm:    signed from project datum — the SINGLE
+                      authoritative vertical fact for a level
+Element z:            LEVEL-RELATIVE
+
+absoluteZ    = level.elevationMm + (baseOffsetMm ?? 0)   derived, never stored
+floorToFloor = next.elevationMm − current.elevationMm    derived, never stored
+```
+
+Slab structural thickness belongs to the **Slab and its assembly**, not to Level.
+Real-world georeference lives on **Site**, separate from building-local coordinates.
+
 Unit conversion belongs in:
 
 ```text
@@ -434,7 +526,8 @@ Do not spread ad-hoc unit conversions across UI code.
 
 # 11. Building Model Domain Purity
 
-`packages/building-model` and other core domain packages must remain framework-independent.
+`packages/building-model`, `packages/model-session`, `packages/units`,
+`packages/qs-engine` and `packages/cost-engine` must remain framework-independent.
 
 They must not depend directly on:
 
@@ -484,6 +577,75 @@ audit/versioning
 ```
 
 Do not generate renderer-specific replacement identities.
+
+---
+
+# 12.1 Room, Opening and Type Semantics — Locked
+
+## Rooms (ADR-006)
+
+```text
+wall centreline graph → CONNECTIVITY (which regions are enclosed)
+        ↓
+resolve junctions → derive INTERIOR WALL FACES
+        ↓
+usable room boundary → persist with stable ID + BOUNDS relationships
+```
+
+The persisted boundary comes from **interior wall faces**, never from wall
+centrelines. Centreline boundaries overstate floor area by half a wall thickness
+on every edge and are not professionally defensible.
+
+- **Area is always computed from the boundary.** A user-entered area is never
+  stored as authoritative geometry.
+- `user_defined = false` → recomputed on bounding-wall change; stable ID, name,
+  number and finishes preserved; material area change flagged.
+- `user_defined = true` → **never silently overwritten**.
+- Room detection lives in `packages/building-model`, not in the editor.
+
+## Openings
+
+**A door or window IS the opening.** Its hosted geometry creates the hole. Do not
+create a second `Opening` element for the same physical hole.
+
+A standalone `opening` element exists **only** for fixture-less holes: service
+penetration, arch, unfilled wall opening.
+
+**QS sees hosted doors/windows and standalone openings through ONE
+opening/deduction abstraction.** Two code paths here produce divergent net wall
+area — the most important QS number.
+
+## Three identity axes (ADR-007, ADR-020)
+
+```text
+element_type_id       → WHAT IT IS          schedules, IFC type, type-level edits
+assembly_version_id   → WHAT IT'S BUILT OF  materials, labour, plant, waste
+finish_assignment     → WHAT IT LOOKS LIKE  surface finish (ADR-020)
+```
+
+Never conflate these. Repainting a wall creates a **new finish assignment**,
+never a new assembly version.
+
+## FF&E — furniture, fixtures, equipment (ADR-019)
+
+FF&E instances are **domain elements** carrying `element_class = FFE`. They get
+stable IDs, tenancy, commands, versioning, undo, audit and provenance like any
+other element.
+
+```text
+✗ furniture held only in a Three.js scene       ← release-blocking
+✗ GLB binaries in relational columns            ← release-blocking
+✓ ffe_assets (catalogue, versioned) + ffe_instances (placed elements)
+```
+
+**FF&E never bounds a room and never affects a construction quantity.** Every
+element iteration in QS and topology code must honour the class.
+
+## Manual interior work requires no AI
+
+Walkthrough, material/finish changes and furniture placement are **deterministic
+commands**. Manual and AI paths converge on the **same commands** — there is no
+AI-specific write path. Ordinary interaction consumes **zero LLM tokens**.
 
 ---
 
@@ -967,14 +1129,23 @@ Do not create one giant application Zustand store.
 Use:
 
 ```text
-server/database → authoritative persistent state
-
-TanStack Query → client cache of server state where useful
-
-Zustand → ephemeral editor/UI state
+server/database   → authoritative persistent state
+model-session     → in-memory WORKING COPY of the canonical model
+                    (baseVersion, optimistic commands, pending queue,
+                     reconciliation) — packages/model-session, ADR-008
+TanStack Query    → project metadata, lists, QS/BOQ/cost read models
+Zustand           → ephemeral UI state ONLY
+                    (active tool, selection, panel visibility,
+                     camera/UI preferences, temporary interaction state)
 ```
 
 The canonical Building Model must not become a Zustand-only authority.
+
+**`packages/model-session` is a synchronized working copy, not a second
+authoritative database.** PostgreSQL remains authoritative.
+
+**TanStack Query must not own working geometry.** It is wrong for CAD interaction
+rates and its refetch semantics do not fit a working document.
 
 ---
 
@@ -1144,6 +1315,22 @@ Every sensitive operation checks:
 # 44. Billing Architecture
 
 Customer-facing credits are **not raw AI tokens**.
+
+Plans may be **RECURRING** or **FIXED_TERM** (ADR-021). A project pass ends at its
+term with **no cancellation event** — that is a successful outcome, not churn.
+Expiry archives the project (data preserved); reactivation restores capability.
+
+Feature code reads **entitlements** (`feature.qs.advanced`, `limit.active_projects`),
+never plan names.
+
+The entitlement catalogue is **runtime-editable by a platform admin** (ADR-022).
+Moving a capability between tiers is a data change, not a deployment:
+
+```text
+one customer, now      → plan_entitlement_overrides   (immediate)
+everyone, going forward → publish a new plan version  (existing subscribers
+                                                       keep their version)
+```
 
 Customer-facing concepts:
 
@@ -2117,17 +2304,738 @@ for repository/package scope where appropriate.
 
 Do not introduce the old project name `BuildWise` into new production code or documentation.
 
-If legacy reference docs still contain `BuildWise`, do not mass-edit them during unrelated implementation tasks unless requested.
+**The rename is complete as of 2026-09-12.** No `BuildWise` reference remains in
+any document, template, or configuration file. If one reappears, it is a
+regression — fix it rather than treating it as legacy.
 
 ---
 
-# 90. Final Agent Contract
+# 90. Official Documentation & Dependency Freshness Agent Instructions
+
+> **Purpose:** Mandatory dependency, integration, SDK, API, framework, and external-service verification rules for all AI agents working on Buildora AI.
+>
+> **Applies to:** Codex, Claude, Antigravity, IDE agents, CI repair agents, and any future automated contributor.
+
+---
+
+## 90.0 Policy
+
+Buildora AI must be built against current, supported, stable technology.
+
+AI agents must **never rely only on remembered framework/package knowledge** when implementing an integration, installing a dependency, configuring a service, or using an external API.
+
+**Current official documentation is the primary technical source.**
+
+---
+
+## 90.1 Mandatory Documentation Check Before Implementation
+
+Before starting implementation involving any:
+
+- framework,
+- package,
+- SDK,
+- API,
+- cloud service,
+- database extension,
+- AI provider,
+- CAD/BIM integration,
+- CLI,
+- build tool,
+- deployment service,
+- authentication provider,
+- payment provider,
+- monitoring/observability integration,
+
+the agent MUST:
+
+1. Identify the exact technology involved.
+2. Read the relevant **current official documentation**.
+3. Confirm the currently supported stable version.
+4. Confirm that the package/API/module being used is not deprecated.
+5. Check whether the repository already pins a compatible version.
+6. Review migration notes or breaking changes when relevant.
+7. Confirm compatibility with the Buildora AI architecture.
+8. Only then begin implementation.
+
+Examples include:
+
+```text
+Next.js
+React
+NestJS
+Drizzle ORM
+PostgreSQL
+PostGIS
+pgvector
+Redis / Valkey
+Temporal
+Stripe
+Clerk
+OpenAI
+Cloudflare
+AWS
+Three.js
+PixiJS
+That Open
+web-ifc
+IfcOpenShell
+FastAPI
+PyTorch
+ONNX Runtime
+Rust
+WASM tooling
+Docker
+GitHub Actions
+Sentry
+OpenTelemetry
+```
+
+Do not implement based solely on:
+
+- remembered APIs,
+- old tutorials,
+- outdated Stack Overflow answers,
+- blog posts,
+- obsolete examples,
+- code copied from older major versions.
+
+---
+
+## 90.2 Official Sources First
+
+Use information sources in this order:
+
+1. Official documentation.
+2. Official API reference.
+3. Official migration/upgrade guide.
+4. Official GitHub repository.
+5. Official release notes/changelog.
+6. Official package registry metadata.
+7. Maintainer-provided examples.
+
+Community tutorials, blog posts, forum answers, videos and third-party examples may be used only as supplementary material.
+
+They must never override current official documentation.
+
+---
+
+## 90.3 Stable Versions Only
+
+Unless the user explicitly approves otherwise, use:
+
+> **the latest stable, supported version that is compatible with Buildora AI and its existing dependency graph.**
+
+Do not automatically use:
+
+- alpha versions,
+- beta versions,
+- release candidates,
+- nightly builds,
+- experimental releases,
+- deprecated versions,
+- unsupported versions,
+- abandoned packages,
+- unmaintained forks.
+
+Example:
+
+```text
+latest stable
+✓ acceptable
+
+latest beta
+✗ do not use unless explicitly approved
+```
+
+"Latest" does not mean "highest published version number."
+
+Always verify the stable release channel.
+
+---
+
+## 90.4 Never Install Deprecated Packages
+
+Before adding a dependency, verify:
+
+- the package is actively maintained,
+- the package is not deprecated,
+- the intended API is not deprecated,
+- official documentation still recommends/supports it,
+- the package is compatible with the current runtime/framework,
+- the licence is acceptable,
+- there is no officially recommended replacement that should be used instead.
+
+If official documentation says:
+
+```text
+deprecated-package
+→ replacement-package
+```
+
+use the supported replacement unless there is an explicitly approved architectural reason not to.
+
+Do not knowingly introduce deprecated architecture into new code.
+
+---
+
+## 90.5 Check APIs, Not Only Package Versions
+
+A package can be current while a method, class, config key, CLI command or endpoint inside it is deprecated.
+
+Before implementation, verify that the exact:
+
+- method,
+- class,
+- hook,
+- API endpoint,
+- environment variable,
+- config option,
+- command,
+- integration pattern,
+
+is still current and supported.
+
+Example:
+
+```text
+Package:
+current
+
+Method:
+deprecated
+
+Result:
+DO NOT USE
+```
+
+Use the officially documented replacement.
+
+---
+
+## 90.6 External Integration Documentation Is Mandatory
+
+Before implementing any external integration, read the provider's current official integration documentation.
+
+Examples:
+
+```text
+OpenAI
+Stripe
+Clerk
+Temporal
+Cloudflare
+AWS
+Sentry
+GitHub
+```
+
+Verify at minimum:
+
+- current SDK,
+- current API version,
+- authentication method,
+- recommended integration flow,
+- retries,
+- idempotency requirements,
+- webhook behavior,
+- rate limits,
+- timeout guidance,
+- security recommendations,
+- versioning/deprecation policy.
+
+Do not copy an old integration pattern merely because it still compiles.
+
+---
+
+## 90.7 OpenAI / AI Provider Rule
+
+Before implementing or modifying AI-provider functionality:
+
+1. Read the current official provider API documentation.
+2. Verify current model IDs.
+3. Verify currently supported API interfaces.
+4. Verify tool/function-calling format.
+5. Verify structured-output capabilities.
+6. Verify usage/token metadata returned by the API.
+7. Verify current pricing separately from product logic.
+8. Check deprecation notices.
+9. Verify current SDK version.
+
+Buildora domain code must use logical aliases such as:
+
+```text
+FAST
+BALANCED
+ADVANCED
+EXPERT
+```
+
+Provider-specific model IDs belong in configuration.
+
+Do not hard-code AI SDK assumptions from old tutorials.
+
+---
+
+## 90.8 Database / ORM Rule
+
+Before implementing database or ORM functionality, verify the current official documentation for relevant technologies such as:
+
+```text
+PostgreSQL
+Drizzle ORM
+node-postgres
+PostGIS
+pgvector
+```
+
+Particularly verify current guidance for:
+
+- migrations,
+- transactions,
+- connection pooling,
+- prepared statements,
+- JSONB,
+- UUID,
+- NUMERIC,
+- extensions,
+- indexes,
+- RLS,
+- serverless/pooled connection behavior.
+
+Do not generate production database behavior from outdated ORM examples.
+
+---
+
+## 90.9 Frontend Framework Rule
+
+Before implementing framework-specific frontend behavior, verify current documentation for:
+
+```text
+Next.js
+React
+TanStack Query
+Zustand
+React Hook Form
+Zod
+Tailwind
+Radix
+```
+
+Pay special attention to frequently changing framework features:
+
+- Next.js App Router,
+- Server Components,
+- Client Components,
+- caching,
+- route handlers,
+- server actions,
+- metadata,
+- rendering behavior,
+- React APIs.
+
+Do not apply patterns from older Next.js/React generations without verification.
+
+---
+
+## 90.10 Graphics / CAD / BIM Rule
+
+Before implementing graphics or BIM functionality, verify current official documentation for:
+
+```text
+PixiJS
+Three.js
+That Open
+web-ifc
+IfcOpenShell
+```
+
+Do not assume examples written for older major versions remain valid.
+
+Graphics/BIM libraries frequently change:
+
+- initialization APIs,
+- event APIs,
+- render loops,
+- loaders,
+- disposal APIs,
+- WebGL/WebGPU behavior,
+- IFC APIs,
+- scene/fragment APIs.
+
+Implementation must match the installed version's documentation.
+
+---
+
+## 90.11 Dependency Installation Procedure
+
+Before installing a new dependency, determine:
+
+```text
+Package:
+Purpose:
+Current stable version:
+Existing repository version:
+Official documentation:
+Maintenance status:
+Deprecation status:
+Licence:
+Compatibility:
+Reason required:
+```
+
+Then install it using the repository-standard package manager:
+
+```text
+TypeScript / JavaScript → pnpm
+Python                  → uv
+Rust                    → cargo
+```
+
+Do not introduce another package manager without an approved ADR.
+
+---
+
+## 90.12 Do Not Blindly Use `latest`
+
+Do not run:
+
+```bash
+pnpm add some-package@latest
+```
+
+without first checking what `latest` resolves to.
+
+Confirm that it:
+
+- is stable,
+- is supported,
+- is compatible,
+- does not force an unrelated framework/runtime upgrade,
+- does not introduce unreviewed breaking changes.
+
+The target is:
+
+```text
+latest stable compatible version
+```
+
+not:
+
+```text
+highest published version
+```
+
+---
+
+## 90.13 Existing Repository Versions Take Priority
+
+If the repository already uses a stable supported version:
+
+Do not upgrade it merely because a newer version exists.
+
+Upgrade only when:
+
+- required by the requested feature,
+- required for security,
+- required for compatibility,
+- current version is deprecated/EOL,
+- the user explicitly asks for an upgrade,
+- the task is a dependency-maintenance task.
+
+Avoid unrelated dependency upgrades in feature work.
+
+---
+
+## 90.14 Major-Version Upgrade Rule
+
+A major-version upgrade must never be hidden inside an unrelated task.
+
+Example:
+
+```text
+Task:
+Add project search
+
+Unacceptable side effect:
+Upgrade Next.js major version
+```
+
+Major upgrades require:
+
+- official migration guide review,
+- breaking-change analysis,
+- compatibility review,
+- tests,
+- explicit mention in the implementation plan,
+- user approval where architecture/runtime behavior may change.
+
+---
+
+## 90.15 Lockfiles Are Mandatory
+
+Commit and preserve deterministic lockfiles:
+
+```text
+pnpm-lock.yaml
+uv.lock
+Cargo.lock
+```
+
+Do not delete or regenerate lockfiles unnecessarily.
+
+CI and production must resolve deterministic dependency versions.
+
+---
+
+## 90.16 Security Advisories
+
+For new or upgraded dependencies, check for known critical security issues where practical.
+
+Never knowingly introduce a version with a serious unresolved vulnerability when a supported fixed version exists.
+
+Security fixes may justify an upgrade even when unrelated dependency upgrades are normally avoided.
+
+---
+
+## 90.17 Avoid Abandoned Packages
+
+Before adopting a new library, consider:
+
+- recent release activity,
+- active maintenance,
+- unresolved security issues,
+- issue/PR activity,
+- ecosystem maturity,
+- compatibility,
+- licence.
+
+For foundational Buildora architecture, prefer mature, maintained, well-documented technologies.
+
+Do not add a dependency for trivial functionality that can be safely implemented with a small amount of code.
+
+---
+
+## 90.18 Integration Versioning
+
+When an external service supports explicit API versions, record the selected version where appropriate.
+
+Examples:
+
+```text
+Stripe API version
+IFC schema version
+AI provider model/rate version
+Embedding profile
+Workflow schema version
+```
+
+Do not allow provider-default changes to silently change production behavior.
+
+---
+
+## 90.19 Record Version-Sensitive Decisions
+
+If an implementation materially depends on a specific framework/API behavior, document it in the appropriate location:
+
+```text
+ADR
+architecture document
+integration README
+code comment near non-obvious compatibility logic
+```
+
+Do not document obvious code.
+
+Document assumptions that would matter during a future upgrade.
+
+---
+
+## 90.20 Documentation Version Awareness
+
+When reading official documentation, ensure it applies to the version actually installed or planned.
+
+Do not combine:
+
+```text
+v5 package
++
+v3 documentation
+```
+
+If documentation has a version selector, use the correct version.
+
+---
+
+## 90.21 When Documentation and Existing Code Conflict
+
+If official documentation conflicts with existing Buildora code:
+
+Do not silently rewrite the architecture.
+
+Determine whether:
+
+1. existing code uses an older but still supported version,
+2. existing code is incorrect,
+3. the official documentation refers to a newer major version,
+4. architecture documentation explicitly requires the existing behavior.
+
+Then report the conflict.
+
+If resolving it requires an architectural change or major upgrade, request approval first.
+
+---
+
+## 90.22 When Official Documentation Cannot Be Verified
+
+If a task materially depends on an external API/package behavior and current official documentation cannot be verified:
+
+Do not invent the API.
+
+Do not guess package versions.
+
+Do not present remembered syntax as verified current behavior.
+
+Report clearly:
+
+```text
+Official documentation could not be verified.
+This integration should not proceed until the current API/version
+is confirmed.
+```
+
+This should not block unrelated version-independent work.
+
+---
+
+## 90.23 Implementation Start Checklist
+
+Before implementation involving any external dependency or service, confirm:
+
+```text
+[ ] Relevant Buildora architecture docs read
+[ ] AGENTS.md rules read
+[ ] Current official documentation checked
+[ ] Stable version confirmed
+[ ] Deprecation status checked
+[ ] Existing repository version checked
+[ ] Breaking changes reviewed when relevant
+[ ] Compatibility verified
+[ ] Correct package manager selected
+[ ] Lockfile impact understood
+```
+
+Only then begin implementation.
+
+---
+
+## 90.24 Agent Task Workflow Addition
+
+Under the normal "Before Coding" workflow, include:
+
+```text
+For every external package, SDK, service, API, framework or
+integration involved in the task, read its current official
+documentation and verify the stable supported version/API before
+implementation.
+```
+
+---
+
+## 90.25 Review Before Completion
+
+For every task that touches dependencies or integrations, check:
+
+### Dependency / Integration Stability
+
+- Current official documentation checked?
+- Stable supported version used?
+- Deprecated package/API avoided?
+- Existing repository version respected?
+- Lockfile preserved?
+- No unrelated major upgrades?
+- Integration follows the provider's current recommended pattern?
+- Version-sensitive behavior documented where needed?
+- Security/deprecation notices considered?
+
+---
+
+## 90.26 Completion Report
+
+When a task introduces or changes a dependency/integration, report:
+
+```text
+Dependencies added/changed:
+- package
+- version
+- reason
+
+Official documentation verified:
+- technology
+- documentation/version checked
+
+Deprecated APIs avoided/replaced:
+- if applicable
+
+Compatibility notes:
+- if applicable
+```
+
+Do not claim "latest stable" unless it was actually verified.
+
+---
+
+## 90.27 Core Stability Rule
+
+Buildora AI prioritizes stability over novelty.
+
+The default decision order is:
+
+```text
+Supported
+    ↓
+Stable
+    ↓
+Maintained
+    ↓
+Well documented
+    ↓
+Compatible
+    ↓
+Necessary
+    ↓
+Then install/use it
+```
+
+Not:
+
+```text
+Newest
+    ↓
+Install immediately
+```
+
+---
+
+## 90.28 Final Mandatory Rule
+
+> **Before implementing any external framework, package, SDK, service, API, database extension, AI provider, cloud integration, CAD/BIM integration, or infrastructure technology, the agent MUST consult its current official documentation and verify the latest stable compatible approach. Deprecated, unsupported, experimental, or remembered legacy patterns must not be introduced into Buildora AI without explicit approval.**
+
+When stability and novelty conflict:
+
+> **Choose the stable, officially supported approach.**
+
+---
+
+# 91. Final Agent Contract
 
 Every agent working on Buildora AI must preserve:
 
 1. One canonical Building Model.
 2. One authoritative persistence path.
-3. 2D and 3D as representations, not independent truth.
+3. 2D and 3D as representations, not independent truth, both fed by
+   `packages/model-session` as a synchronized working copy — never a second
+   authority.
 4. IFC as interchange, not internal authority.
 5. Deterministic geometry/QS/costing.
 6. Typed AI tools and ChangeSets.
@@ -2145,6 +3053,28 @@ Every agent working on Buildora AI must preserve:
 18. Cost-aware AI/rendering.
 19. Documentation and tests as part of implementation.
 20. User approval for significant architectural changes.
+21. Level-relative geometry with one authoritative level elevation (ADR-005).
+22. Room boundaries from interior wall faces; area computed, never entered (ADR-006).
+23. A door or window IS its opening; one QS deduction abstraction.
+23a. FF&E are classed domain elements, never renderer state (ADR-019).
+23b. Finish, assembly and element type are three distinct axes (ADR-020).
+23c. Manual interior work never requires AI; both paths share one command set.
+23d. Every user has a personal organization; there is **no user-owned project path** (ADR-021).
+23e. Plans may be recurring or fixed-term; archive preserves data (ADR-021).
+23f. Feature code reads entitlements, never plan names.
+23g. **Never duplicate QS/BOQ/cost/model engines per customer segment.**
+23h. **Gated capabilities are enforced server-side** before the work happens.
+     Hiding a button is not access control (ADR-022).
+23i. **Check order: feature flag → entitlement → credit reservation.** An
+     unentitled request consumes no credit.
+23j. **Feature flags are rollout; entitlements are commercial rights.** A flag
+     must never grant paid access.
+24. `uuid` primary keys; `public_id` never a foreign-key target (ADR-004).
+25. Package dependencies point downward only; domain packages import no
+    framework; no cycles (ADR-011).
+26. No app, package or managed service before a real consumer exists (ADR-012).
+27. The frozen decisions in `FINAL_SYSTEM_ARCHITECTURE.md` are not relitigated
+    without a superseding ADR.
 
 When uncertain:
 
